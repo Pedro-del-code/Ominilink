@@ -1,0 +1,48 @@
+{
+  "schema": 1,
+  "name": "browser-receiver",
+  "platform": "browser",
+  "roles": [
+    "receiver"
+  ],
+  "protocol_versions": [
+    1
+  ],
+  "transports": [
+    "sse",
+    "http-longpoll"
+  ],
+  "codecs": [
+    "json-b64"
+  ],
+  "content": {
+    "text": {
+      "max_bytes": 80000,
+      "mimes": [
+        "text/plain"
+      ],
+      "max_chars": 20000
+    },
+    "html": {
+      "max_bytes": 200000,
+      "mimes": [
+        "text/html"
+      ]
+    },
+    "image": {
+      "max_bytes": 2000000,
+      "mimes": [
+        "image/png",
+        "image/jpeg",
+        "image/gif",
+        "image/webp"
+      ],
+      "max_width": 4096,
+      "max_height": 4096
+    }
+  },
+  "features": [
+    "html-sandbox",
+    "ack-displayed"
+  ]
+}

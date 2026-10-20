@@ -1,0 +1,35 @@
+{
+  "schema": 1,
+  "name": "constrained-receiver",
+  "platform": "embedded",
+  "roles": [
+    "receiver"
+  ],
+  "protocol_versions": [
+    1
+  ],
+  "transports": [
+    "http-longpoll"
+  ],
+  "codecs": [
+    "json-b64"
+  ],
+  "content": {
+    "text": {
+      "max_bytes": 4000,
+      "mimes": [
+        "text/plain"
+      ],
+      "max_chars": 1000
+    },
+    "image": {
+      "max_bytes": 60000,
+      "mimes": [
+        "image/jpeg"
+      ],
+      "max_width": 160,
+      "max_height": 120
+    }
+  },
+  "features": []
+}
