@@ -1,0 +1,13 @@
+# Dependências de execução (servidor, clientes e receptor).
+# Testado neste ambiente com: Python 3.12.3, Flask 3.1.3, Werkzeug 3.1.7, Pillow 12.1.1, requests 2.33.1.
+Flask>=3.0,<4
+Pillow>=10.3
+requests>=2.31,<3
+
+# Servidor WSGI de produção (Render). Não estava disponível no ambiente de testes: o comando de inicialização
+# com gunicorn foi escrito conforme a documentação, mas NÃO foi executado aqui.
+gunicorn>=22.0
+
+# Somente necessário com PostgreSQL (DATABASE_URL=postgresql://...). Implementado, mas NÃO validado contra um
+# PostgreSQL real neste ambiente (sem serviço/driver); os testes de persistência usam SQLite.
+psycopg[binary]>=3.1,<4

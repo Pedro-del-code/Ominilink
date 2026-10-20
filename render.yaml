@@ -1,0 +1,26 @@
+# Blueprint do Render (https://render.com/docs/blueprint-spec). Revisado em 18/10/2026 contra a documentação oficial.
+# Atenção: com `plan: free` o serviço "dorme" após 15 min sem tráfego e o PostgreSQL gratuito EXPIRA em 30 dias
+# (veja docs/DEPLOY_RENDER.md). Para uso contínuo, troque os planos.
+services:
+  - type: web
+    name: omnilink-coordinator
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    # 1 worker + threads: o estado de sessões/despertar fica em memória do processo (instância única).
+    # Cada fluxo SSE/long-poll ocupa uma thread; ajuste --threads conforme o número de receptores simultâneos.
+    startCommand: gunicorn wsgi:app --worker-class gthread --workers 1 --threads 16 --timeout 120 --graceful-timeout 30 --bind 0.0.0.0:$PORT --access-logfile -
+    healthCheckPath: /health
+    envVars:
+      - key: OMNILINK_ENV
+        value: production
+      - key: OMNILINK_ENROLLMENT_KEY
+        generateValue: true          # valor aleatório gerado pelo Render; consulte-o em Environment (é o segredo de registro)
+      - key: DATABASE_URL
+        fromDatabase:
+          name: omnilink-db
+          property: connectionString
+
+databases:
+  - name: omnilink-db
+    plan: free

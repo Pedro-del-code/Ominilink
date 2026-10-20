@@ -1,0 +1,6 @@
+-r requirements.txt
+# Opcionais para desenvolvimento. A suíte roda com `python -m unittest` (biblioteca padrão); pytest também a executa.
+pytest>=8
+# Testes do receptor web em navegador real (ignorados automaticamente se ausentes):
+#   pip install playwright && playwright install chromium
+playwright>=1.45
