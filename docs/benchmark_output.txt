@@ -1,0 +1,11 @@
+Latência de entrega (POST /v1/messages → apresentação no receptor), texto curto, 40 envios, loopback
+transporte        mediana      p95      máx
+sse/json            3.1ms    4.8ms    6.3ms
+http-longpoll/json    3.0ms    4.6ms    5.1ms
+http-longpoll/binary    5.4ms    6.9ms    7.6ms
+
+Custo em bytes no fio por codec (imagem PNG incompressível)
+imagem          conteúdo    json-b64  binary-frame  economia
+200x150          90.275     120.688        90.601     24.9%
+640x480         923.409   1.231.533       923.736     25.0%
+900x700       1.893.368   2.524.814     1.893.696     25.0%

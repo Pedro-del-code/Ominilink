@@ -1,0 +1,67 @@
+OmniLink — demonstração local (coordenador em http://127.0.0.1:38103, armazenamento em memória)
+
+[1] Registro: cada dispositivo anuncia suas próprias capacidades
+-----------------------------------------------------------------
+    dev_86f9aa0ae770db7f  python-sender        offline transportes=http-rest              codecs=json-b64
+    dev_486f8f96a56ee67b  notebook             online  transportes=sse,http-longpoll      codecs=binary-frame,json-b64
+    dev_13ff54f6eba0766e  navegador-tv         online  transportes=sse,http-longpoll      codecs=json-b64
+    dev_d83c4721ff95109e  painel-simples       online  transportes=http-longpoll          codecs=json-b64
+    dev_bc676da1716fb831  estacao-de-trabalho  online  transportes=sse,http-longpoll      codecs=binary-frame,json-b64
+    dev_76c43a0d76669815  equipamento-antigo   offline transportes=ws,lan-direct          codecs=cbor
+
+[2] Negociação (simulação, nada é enviado): a MESMA imagem de ~920 KB para cada receptor
+-----------------------------------------------------------------------------------------
+    notebook             → sse + json-b64 (sem adaptação)
+    navegador-tv         → sse + json-b64 (sem adaptação)
+    estacao-de-trabalho  → http-longpoll + binary-frame (sem adaptação)
+    painel-simples       → http-longpoll + json-b64 (fit_image)
+    equipamento-antigo   → INCOMPATÍVEL
+        [ERRO] PROTOCOL_VERSION_MISMATCH: Sem versão de protocolo em comum (emissor=[1], receptor=[2], coordenador=[1]).
+                sugestão: Atualize o cliente mais antigo ou habilite uma versão comum.
+        [ERRO] CONTENT_UNSUPPORTED: O receptor não declara suporte ao conteúdo 'image'.
+                sugestão: Habilite o tipo no receptor ou envie outro tipo de conteúdo.
+        [AVISO] TRANSPORT_NOT_IMPLEMENTED: Transporte 'ws' é conhecido, mas não está implementado nesta versão; ignorado.
+                sugestão: Use 'sse' ou 'http-longpoll', ou implemente o transporte como plugin.
+        [AVISO] TRANSPORT_NOT_IMPLEMENTED: Transporte 'lan-direct' é conhecido, mas não está implementado nesta versão; ignorado.
+                sugestão: Use 'sse' ou 'http-longpoll', ou implemente o transporte como plugin.
+        [ERRO] NO_COMMON_TRANSPORT: Nenhum transporte utilizável em comum. Receptor anuncia ['ws', 'lan-direct']; coordenador implementa ['http-longpoll', 'sse'].
+                sugestão: Abra o receptor web (/receiver) no navegador do dispositivo ou atualize o cliente para anunciar 'http-longpoll'.
+        Alternativas propostas:
+          - Atualize o cliente que usa a versão mais antiga do protocolo ou escolha outro receptor.
+          - Use um receptor com suporte a imagens (por exemplo, o receptor web em /receiver).
+          - Abra o receptor web (/receiver) no navegador do dispositivo receptor.
+          - Registre o dispositivo com um perfil que anuncie 'http-longpoll' e 'json-b64'.
+
+[3] Consentimento explícito: sem autorização, nada chega ao receptor
+---------------------------------------------------------------------
+    envio recusado: NOT_AUTHORIZED — O receptor foi notificado (pedido grq_28b9cb782716ea0e). Aguarde a aprovação e reenvie.
+    o notebook vê o pedido de 'python-sender' para: text; conteúdo pendente no inbox: []
+    após a aprovação: aceito (msg_24b90cdf526527db96fec822), status final = displayed
+
+[4] Texto, imagem e HTML entregues, com confirmação de recebimento
+-------------------------------------------------------------------
+    imagem para a estação: NOT_AUTHORIZED (pedido grq_7dfb9506ecf570fa) — o receptor foi notificado
+    imagem 640x480 → estação: plano http-longpoll + binary-frame (sem adaptação); entregue via http-longpoll; status displayed
+        bytes idênticos aos enviados: True
+    HTML para o navegador: NOT_AUTHORIZED (pedido grq_a2d47b307c1cf7ac) — o receptor foi notificado
+    HTML hostil → navegador: status displayed; recebido: <h1>Relatório</h1><p>Itens: <b>3</b></p>
+
+[5] Adaptação ao receptor: o conteúdo é transformado, nunca descartado em silêncio
+-----------------------------------------------------------------------------------
+    imagem para o painel: NOT_AUTHORIZED (pedido grq_23789091355ccbd0) — o receptor foi notificado
+    imagem 920 KB → painel (JPEG ≤160x120, ≤60 KB): 7648 bytes, image/jpeg; status displayed
+        operações: ['fit_image:image/png->image/jpeg@160x120']
+    HTML para o painel: NOT_AUTHORIZED (pedido grq_b806c1f4a3f22742) — o receptor foi notificado
+    HTML → painel (só texto): 'Aviso\n\nReunião às 10h.' ['html_to_text']
+
+[6] Fila, reentrega e recuperação
+----------------------------------
+    receptor offline: aceito com aviso ['RECEIVER_OFFLINE']; status = queued
+    tablet conectou: status displayed após 2 entregas; apresentou 1 vez(es) (a reentrega foi deduplicada)
+
+[7] Revogação: acesso encerrado imediatamente
+----------------------------------------------
+    envio ao dispositivo revogado: RECEIVER_UNKNOWN
+    o receptor revogado encerrou seu laço com: DEVICE_REVOKED
+
+Demonstração concluída.
