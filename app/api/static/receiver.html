@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>OmniLink · Receptor</title>
+<link rel="stylesheet" href="/static/receiver.css">
+</head>
+<body>
+<header class="bar">
+  <div class="brand"><span class="mark" aria-hidden="true"></span><span class="name">OmniLink</span><span class="role">receptor</span></div>
+  <div class="status" role="status" aria-live="polite"><span class="dot" id="dot" data-state="idle"></span><span id="status-text">desconectado</span></div>
+</header>
+
+<main>
+  <section id="setup" class="setup" hidden>
+    <h1>Registrar este dispositivo</h1>
+    <p class="lede">Informe a chave de registro do coordenador. Ela é enviada uma única vez e não fica guardada.</p>
+    <form id="setup-form" autocomplete="off">
+      <label>Nome do dispositivo
+        <input id="device-name" required maxlength="48" autocomplete="off" spellcheck="false">
+      </label>
+      <label>Chave de registro
+        <input id="enroll-key" type="password" required autocomplete="off">
+      </label>
+      <label class="check"><input id="remember" type="checkbox"> Lembrar neste aparelho (guarda a credencial no navegador)</label>
+      <button type="submit" class="primary">Registrar e conectar</button>
+      <p id="setup-error" class="error" role="alert"></p>
+    </form>
+  </section>
+
+  <section id="inbox" hidden>
+    <div id="grants" class="grants" aria-live="assertive"></div>
+    <section class="stage" aria-label="Conteúdo atual">
+      <p id="stage-empty" class="empty">Aguardando conteúdo de outros dispositivos.</p>
+      <article id="stage-item" hidden></article>
+    </section>
+    <section class="history" aria-label="Recebidos">
+      <h2>Recebidos</h2>
+      <ol id="history"></ol>
+    </section>
+    <footer class="foot">
+      <span id="device-id" class="mono"></span>
+      <button id="retry" class="ghost" hidden>Tentar reconectar</button>
+      <button id="forget" class="ghost">Revogar este dispositivo</button>
+    </footer>
+  </section>
+</main>
+<script src="/static/receiver.js" defer></script>
+</body>
+</html>
